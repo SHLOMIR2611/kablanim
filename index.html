@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>סקר ראשוני לקבלן — צ'קליסט</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2933;
+    --ink-soft:#52606D;
+    --paper:#F7F5F0;
+    --card:#FFFFFF;
+    --line:#DDD8CC;
+    --yellow:#FFC72C;
+    --yellow-deep:#B8860B;
+    --ok:#1E7B45;
+    --ok-bg:#E5F3EA;
+    --bad:#B00020;
+    --bad-bg:#FBE7EA;
+    --na:#8A94A0;
+    --na-bg:#EEF0F2;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Heebo',system-ui,sans-serif;
+    line-height:1.5;
+    padding-bottom:80px;
+  }
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:var(--ink);
+    color:#fff;
+    padding:14px 18px 14px 74px;
+    display:flex;flex-direction:column;gap:8px;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+  }
+  .topbar-logo{
+    position:absolute;left:14px;top:12px;
+    background:#fff;border-radius:6px;padding:5px 8px;
+    display:flex;align-items:center;
+  }
+  .topbar-logo img{height:22px;display:block;}
+  .topbar h1{
+    margin:0;font-size:19px;font-weight:700;
+  }
+  .topbar .sub{font-size:12.5px;color:#C9CFD6;}
+  .progress-wrap{
+    height:8px;background:#3A4550;border-radius:5px;overflow:hidden;
+  }
+  .progress-bar{
+    height:100%;background:var(--yellow);width:0%;
+    transition:width .25s ease;
+  }
+  .progress-label{font-size:12px;color:#C9CFD6;}
+
+  main{max-width:1300px;margin:0 auto;padding:18px 20px 0;}
+  section.block{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  h2.block-title{
+    font-size:16px;margin:0 0 12px;font-weight:700;
+    border-right:5px solid var(--yellow);
+    padding-right:10px;
+  }
+  h3.divider{
+    font-size:13.5px;font-weight:700;color:#fff;
+    background:var(--ink);
+    padding:8px 12px;border-radius:6px;
+    margin:18px 0 10px;
+  }
+  label.field{display:block;margin-bottom:12px;}
+  label.field .lbl{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:4px;}
+  .field-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:4px 18px;
+  }
+  .field-grid .field{margin-bottom:12px;}
+  input[type=text],input[type=date],input[type=number],textarea{
+    width:100%;padding:10px 11px;
+    border:1px solid var(--line);border-radius:7px;
+    font-family:inherit;font-size:14.5px;color:var(--ink);
+    background:#FBFAF7;
+  }
+  textarea{min-height:64px;resize:vertical;}
+  input:focus,textarea:focus{outline:2px solid var(--yellow-deep);outline-offset:1px;}
+
+  .chip-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    border:1px solid var(--line);background:#FBFAF7;
+    padding:9px 14px;border-radius:20px;font-size:13.5px;
+    cursor:pointer;user-select:none;color:var(--ink);
+  }
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .chip input{display:none;}
+
+  .item{
+    border:1px solid var(--line);border-radius:9px;
+    padding:12px;margin-bottom:10px;background:#FEFDFB;
+  }
+  .item-top{display:flex;gap:10px;align-items:flex-start;}
+  .item-num{
+    flex:0 0 auto;width:26px;height:26px;border-radius:50%;
+    background:var(--ink);color:#fff;font-size:12.5px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;margin-top:1px;
+  }
+  .item-text{flex:1;font-size:14px;}
+  .status-row{display:flex;gap:8px;margin-top:10px;}
+  .status-btn{
+    flex:1;padding:9px 4px;border-radius:7px;border:1px solid var(--line);
+    background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-soft);
+    text-align:center;
+  }
+  .status-btn[data-v="yes"].on{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+  .status-btn[data-v="no"].on{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);}
+  .status-btn[data-v="na"].on{background:var(--na-bg);border-color:var(--na);color:#5b6570;}
+  .status-btn[data-v="app"].on{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);}
+  .item-note{
+    margin-top:8px;width:100%;padding:7px 9px;font-size:13px;
+    border:1px solid var(--line);border-radius:6px;background:#fff;display:none;
+  }
+  .item.no .item-note{display:block;}
+  .item.no{border-color:var(--bad);}
+  .item.na{opacity:.65;}
+
+  .critical-box textarea{border-color:var(--bad);background:#FFF7F7;}
+  .critical-label{color:var(--bad);}
+
+  .briefing-block summary{
+    font-size:16px;font-weight:700;cursor:pointer;
+    border-right:5px solid var(--yellow);padding-right:10px;
+    list-style:none;display:flex;align-items:center;gap:8px;
+  }
+  .briefing-block summary::-webkit-details-marker{display:none;}
+  .briefing-block summary::before{
+    content:'▾';font-size:13px;color:var(--ink-soft);transition:transform .15s ease;
+  }
+  .briefing-block details:not([open]) summary::before{transform:rotate(-90deg);}
+  .briefing-body{margin-top:12px;}
+  .briefing-body h4{
+    font-size:13.5px;margin:16px 0 6px;color:var(--ink);
+    background:#F1EEE6;padding:6px 10px;border-radius:6px;
+  }
+  .briefing-body h4:first-child{margin-top:0;}
+  .briefing-body ul{margin:0 0 4px;padding-right:20px;font-size:13px;color:var(--ink-soft);line-height:1.6;}
+  .briefing-body p{font-size:13px;color:var(--ink-soft);margin:4px 0;}
+  .briefing-body li{margin-bottom:2px;}
+  @media print{
+    details:not([open]) > *:not(summary){display:block !important;}
+    .briefing-block summary::before{display:none;}
+  }
+
+  .jsa-legend{
+    background:#FBFAF7;border:1px solid var(--line);border-radius:8px;
+    padding:10px 12px;font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .jsa-row{
+    border:1px solid var(--line);border-radius:9px;padding:12px;margin-bottom:12px;background:#FEFDFB;
+  }
+  .jsa-row-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .jsa-row-num{font-weight:700;font-size:14px;}
+  .jsa-remove{background:none;border:none;color:var(--bad);font-size:12.5px;cursor:pointer;font-weight:600;padding:4px 6px;}
+  .jsa-subtitle{font-size:11.5px;font-weight:700;color:var(--ink-soft);margin:10px 0 6px;}
+  .jsa-score-row{display:flex;gap:8px;align-items:flex-end;}
+  .jsa-score-row > div{flex:1;}
+  .jsa-score-row label{display:block;font-size:11.5px;color:var(--ink-soft);margin-bottom:3px;}
+  select.jsa-select{
+    width:100%;padding:8px;border:1px solid var(--line);border-radius:7px;font-family:inherit;
+    font-size:13.5px;background:#fff;color:var(--ink);
+  }
+  .jsa-badge{
+    flex:0 0 56px;height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:15px;color:#fff;background:var(--na);
+  }
+  .jsa-badge.low{background:var(--ok);}
+  .jsa-badge.med{background:var(--yellow-deep);}
+  .jsa-badge.high{background:var(--bad);}
+  .jsa-row input[type=text],.jsa-row textarea{margin-bottom:8px;}
+  .jsa-done-check{display:flex;align-items:center;gap:8px;font-size:13.5px;margin:8px 0 0;}
+  .jsa-done-check input{width:16px;height:16px;}
+
+  .confirm-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+  .confirm-item{
+    display:flex;align-items:flex-start;gap:10px;
+    border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    background:#FBFAF7;font-size:13.5px;cursor:pointer;line-height:1.4;
+  }
+  .confirm-item input{margin-top:2px;width:16px;height:16px;flex:0 0 auto;}
+  .hw-link{
+    display:block;text-align:center;text-decoration:none;
+    padding:10px;font-size:13.5px;border-radius:9px;
+  }
+
+  .photo-gallery{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+    gap:10px;margin-top:14px;
+  }
+  .photo-card{
+    border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#FBFAF7;
+  }
+  .photo-card img{width:100%;height:110px;object-fit:cover;display:block;}
+  .photo-caption{
+    width:100%;border:none;border-top:1px solid var(--line);
+    font-size:12px;padding:6px 8px;font-family:inherit;background:transparent;color:var(--ink);
+  }
+  .photo-caption:focus{outline:none;background:#fff;}
+  .photo-remove{
+    width:100%;border:none;border-top:1px solid var(--line);background:#fff;
+    color:var(--bad);font-size:12px;padding:5px;cursor:pointer;font-weight:600;
+  }
+
+  .sig-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .sig-col{flex:1;min-width:260px;}
+  canvas.sig{
+    width:100%;height:120px;border:1px dashed var(--line);border-radius:8px;
+    background:#fff;touch-action:none;
+  }
+  .sig-clear{
+    margin-top:6px;font-size:12px;background:none;border:none;
+    color:var(--ink-soft);text-decoration:underline;cursor:pointer;padding:0;
+  }
+
+  .actions{
+    max-width:1300px;margin:0 auto;padding:4px 20px 24px;
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .btn{
+    flex:1;min-width:150px;padding:13px 16px;border-radius:9px;
+    font-size:14.5px;font-weight:700;border:none;cursor:pointer;
+  }
+  .btn-primary{background:var(--yellow);color:var(--ink);}
+  .btn-secondary{background:var(--ink);color:#fff;}
+  .btn-ghost{background:none;border:1px solid var(--line);color:var(--ink-soft);}
+
+  .export-panel{
+    max-width:1300px;margin:0 auto 24px;padding:0 20px;
+  }
+  .export-box{
+    background:#111;color:#E8E8E0;font-family:ui-monospace,Consolas,monospace;
+    font-size:12.5px;white-space:pre-wrap;padding:14px;border-radius:9px;
+    max-height:340px;overflow:auto;direction:rtl;
+  }
+  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+
+  @media print{
+    @page{ size: landscape; }
+    .topbar,.actions{display:none !important;}
+    body{background:#fff;}
+    section.block{break-inside:avoid;border:1px solid #999;}
+    .status-btn{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .photo-remove,#btnAddPhoto{display:none !important;}
+    .photo-caption{border-top:none;pointer-events:none;}
+    .photo-card{break-inside:avoid;}
+    .jsa-remove,#btnAddJsaRow{display:none !important;}
+    .jsa-row{break-inside:avoid;}
+    #hw_link_wrap{display:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo"><img src="data:image/jpeg;base64,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" alt="PCB Technologies"></div>
+  <h1>סקר ראשוני לקבלן — צ'קליסט</h1>
+  <div class="sub">מבוסס על טופס PCB 151/6/2, עם סקר סיכונים (JSA)</div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-label" id="progressLabel">0 מתוך 6 סעיפים נענו</div>
+</div>
+
+<main>
+
+  <section class="block briefing-block">
+    <details open>
+      <summary>תדריך בטיחות לקבלנים — PCB</summary>
+      <div class="briefing-body">
+
+        <h4>1. לפני שמתחילים לעבוד — חובה</h4>
+        <ul>
+          <li>אין להתחיל עבודה ללא תדריך בטיחות ואיכות הסביבה ואישור עבודה.</li>
+          <li>יש לקבל אישור מממונה הבטיחות/הגורם המוסמך.</li>
+          <li>יש להציג את האישורים והרישיונות הנדרשים בהתאם לסוג העבודה.</li>
+          <li>כל עובד קבלן חדש חייב לעבור תדריך לפני כניסתו לעבודה.</li>
+          <li>הקבלן אחראי להעביר את הוראות הבטיחות גם לעובדיו.</li>
+        </ul>
+
+        <h4>2. אחריות הקבלן</h4>
+        <p>הקבלן אחראי לבטיחות העובדים מטעמו ולביצוע העבודה בהתאם:</p>
+        <ul>
+          <li>לחוק ולתקנות.</li>
+          <li>לנהלי PCB.</li>
+          <li>להוראות ממונה הבטיחות.</li>
+          <li>להוראות מנהל העבודה מטעם הקבלן.</li>
+        </ul>
+        <p>הקבלן חייב לוודא שיש לו עובדים מיומנים, ציוד מתאים, כלי עבודה תקינים ואמצעי בטיחות מתאימים.</p>
+
+        <h4>3. ציוד מגן אישי — חובה</h4>
+        <p>יש להגיע לעבודה עם ציוד המגן הנדרש:</p>
+        <ul>
+          <li>קסדת מגן.</li>
+          <li>נעלי בטיחות.</li>
+          <li>משקפי מגן.</li>
+          <li>כפפות.</li>
+          <li>ציוד מגן נוסף בהתאם לסיכון ולסוג העבודה.</li>
+        </ul>
+        <p>אין להיכנס לאזור העבודה ללא ציוד המגן הנדרש.</p>
+
+        <h4>4. גידור וסימון אזור העבודה</h4>
+        <p>בכל מקום שבו קיימים סיכונים:</p>
+        <ul>
+          <li>יש לגדר את אזור העבודה.</li>
+          <li>להציב שילוט ואזהרות מתאימות.</li>
+          <li>לתאם את הגידור עם ממונה הבטיחות.</li>
+          <li>יש להקפיד במיוחד בעבודות בגובה, מנופים, פיגומים וכדומה.</li>
+        </ul>
+
+        <h4>5. כלי עבודה, מכונות וציוד</h4>
+        <p>לפני העבודה:</p>
+        <ul>
+          <li>לבדוק שכל כלי העבודה תקינים.</li>
+          <li>ציוד הדורש בדיקה של בודק מוסמך חייב להיות עם אישור בתוקף.</li>
+          <li>הפעלת ציוד/מתקן תיעשה רק על ידי עובד בעל רישיון מתאים.</li>
+          <li>אין להשתמש בציוד ממונע של המפעל ללא אישור מתאים.</li>
+        </ul>
+
+        <h4>6. עבודות מיוחדות</h4>
+        <p>לפני עבודות בעלות סיכון מיוחד יש לבצע תיאום ואישורים נדרשים.</p>
+        <p><strong>עבודה חמה / השחזה:</strong></p>
+        <ul>
+          <li>מחייבת תיאום ואישור.</li>
+          <li>יש לבצע את הדרישות המיוחדות של נוהל 127/5.</li>
+          <li>נדרש צופה אש בהתאם לדרישות.</li>
+        </ul>
+        <p><strong>עבודה בגובה:</strong></p>
+        <ul>
+          <li>יש לוודא שהעובדים והציוד עומדים בדרישות.</li>
+          <li>יש להשתמש בציוד מתאים ותקין.</li>
+        </ul>
+        <p><strong>חומרים מסוכנים:</strong></p>
+        <ul>
+          <li>חובה לדווח מראש לממונה הבטיחות.</li>
+          <li>יש לקבל היתר עבודה כנדרש.</li>
+          <li>יש להעביר גיליונות בטיחות SDS מעודכנים.</li>
+        </ul>
+
+        <h4>7. אנרגיות ותשתיות</h4>
+        <p>אסור להתחבר לתשתיות המפעל באופן עצמאי.</p>
+        <p>לפני שימוש בחשמל, מים, אוויר או אנרגיה אחרת של המפעל — יש לקבל אישור ממנהל האחזקה.</p>
+
+        <h4>8. התנהגות בשטח המפעל</h4>
+        <ul>
+          <li>נשארים רק באזור העבודה המאושר.</li>
+          <li>יש לשאת את אישור הכניסה בכל עת.</li>
+          <li>אין להסתובב בשטח המפעל ללא צורך.</li>
+          <li>אין לעשן אלא במקומות המיועדים לכך.</li>
+          <li>אין לשתות אלכוהול.</li>
+          <li>אין משחקי מזל או התנהגות שאינה קשורה לעבודה.</li>
+          <li>יש לציית לשילוט, הוראות הבטיחות והוראות התנועה.</li>
+        </ul>
+
+        <h4>9. אש וכיבוי אש</h4>
+        <p>אין להבעיר אש בשטח המפעל ללא אישור מראש. לפני תחילת עבודה יש לוודא:</p>
+        <ul>
+          <li>אמצעי כיבוי זמינים ותקינים.</li>
+          <li>סביבת העבודה נקייה מחומרים דליקים.</li>
+          <li>אם נדרש נטרול מערכת גילוי/כיבוי — הדבר מתואם ומאושר מראש.</li>
+        </ul>
+
+        <h4>10. סדר וניקיון</h4>
+        <p>במהלך העבודה:</p>
+        <ul>
+          <li>לשמור על אזור עבודה נקי ומסודר.</li>
+          <li>לא להשאיר מכשולים.</li>
+          <li>לא להשאיר פסולת או חומרים בסיום העבודה.</li>
+          <li>לא להשאיר מים/שפכים עומדים בשטח.</li>
+        </ul>
+
+        <h4>11. איכות הסביבה ופסולת</h4>
+        <p>הקבלן חייב:</p>
+        <ul>
+          <li>לדווח מראש על סוג וכמות הפסולת הצפויה.</li>
+          <li>לאסוף פסולת בכלי קיבול מתאים.</li>
+          <li>לפנות פסולת לאתר מורשה.</li>
+          <li>להציג אסמכתאות/קבלות על הפינוי.</li>
+          <li>אין לפנות פסולת ללא אישור.</li>
+          <li>אין לשפוך שום חומר למערכת הניקוז/שפכים של המפעל ללא אישור.</li>
+        </ul>
+        <p>בנוסף, יש למנוע מפגעי: אבק, רעש חריג, זיהום אוויר, שפכים, פסולת בנייה.</p>
+
+        <h4>12. אירוע, תאונה או מפגע</h4>
+        <p>במקרה של תאונת עבודה, כמעט תאונה, אירוע מסוכן, נזק לציוד, או מפגע בטיחותי/סביבתי — עוצרים ומדווחים מיד לממונה הבטיחות/הגורם הרלוונטי.</p>
+        <p>אין להמשיך בעבודה כאשר תנאי הבטיחות אינם מספקים.</p>
+
+        <h4>13. עבודה הנמשכת מספר ימים</h4>
+        <p>אם העבודה נמשכת מעבר ליום אחד:</p>
+        <ul>
+          <li>יש לדווח בתחילת כל יום על הגעת הקבלן.</li>
+          <li>יש לדווח על מספר העובדים.</li>
+          <li>יש לוודא שהעבודה עדיין בהתאם לאישור.</li>
+          <li>בסיום פרויקט האישור מתבטל.</li>
+          <li>במקרה של שינוי/פיצול בפרויקט — נדרש אישור בטיחות ואיכות סביבה מחדש.</li>
+        </ul>
+
+      </div>
+    </details>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">פרטי הקבלן והעבודה</h2>
+    <div class="field-grid">
+      <label class="field"><span class="lbl">תאריך</span><input type="date" id="f_date"></label>
+      <label class="field"><span class="lbl">שם החברה / הקבלן</span><input type="text" id="f_company"></label>
+      <label class="field"><span class="lbl">אזור / מחלקה</span><input type="text" id="f_area"></label>
+      <label class="field"><span class="lbl">משך העבודה (שעות)</span><input type="text" id="f_hours" placeholder="לדוגמה: 4"></label>
+      <label class="field"><span class="lbl">מי מזמין העבודה</span><input type="text" id="f_orderer"></label>
+      <label class="field"><span class="lbl">תיאום הפעילות מול מנהל מחלקה</span><input type="text" id="f_dept_coord"></label>
+    </div>
+    <label class="field"><span class="lbl">שם הממונה מטעם החברה/קבלן</span>
+      <div class="chip-grid" id="managerChip">
+        <label class="chip"><input type="checkbox" value="נתן אנגל">נתן אנגל</label>
+        <label class="chip"><input type="checkbox" value="שלמה רזון">שלמה רזון</label>
+        <label class="chip"><input type="checkbox" id="managerOtherCheck" value="אחר">אחר</label>
+      </div>
+      <input type="text" id="f_manager_other" placeholder="שם הממונה" style="display:none;margin-top:8px;">
+    </label>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">סוג העבודה</h2>
+    <div class="chip-grid" id="workTypes">
+      <label class="chip"><input type="checkbox" value="בינוי">בינוי</label>
+      <label class="chip"><input type="checkbox" value="עבודות חשמל">עבודות חשמל</label>
+      <label class="chip"><input type="checkbox" value="עבודה חמה">עבודה חמה</label>
+      <label class="chip"><input type="checkbox" value="עבודה בגובה">עבודה בגובה</label>
+      <label class="chip"><input type="checkbox" value="שרות לציוד">שרות לציוד</label>
+      <label class="chip"><input type="checkbox" value="עבודה באישור חריג">עבודה באישור חריג</label>
+      <label class="chip"><input type="checkbox" value="עבודה עם חומ״ס">עבודה עם חומ״ס</label>
+      <label class="chip"><input type="checkbox" value="אווירה נפיצה">אווירה נפיצה</label>
+      <label class="chip"><input type="checkbox" value="ניתוק מערכות התראה">ניתוק מערכות התראה</label>
+      <label class="chip"><input type="checkbox" value="עבודות חפירה">עבודות חפירה</label>
+      <label class="chip"><input type="checkbox" value="עבודה עם קרינה">עבודה עם קרינה</label>
+      <label class="chip"><input type="checkbox" id="workOtherCheck" value="אחר">אחר</label>
+    </div>
+    <input type="text" id="f_worktype_other" placeholder="פרטו את סוג העבודה" style="display:none;margin-top:10px;width:100%;">
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">חומר המבנה / השלד באזור</h2>
+    <div class="chip-grid" id="structureType">
+      <label class="chip"><input type="radio" name="structure" value="בטון/בלוקים">בטון / בלוקים</label>
+      <label class="chip"><input type="radio" name="structure" value="שלד עץ">שלד עץ</label>
+      <label class="chip"><input type="radio" name="structure" value="שלד ברזל/מתכת">שלד ברזל / מתכת</label>
+      <label class="chip"><input type="radio" name="structure" value="פלסטיק">פלסטיק</label>
+      <label class="chip"><input type="radio" name="structure" value="אחר">אחר</label>
+    </div>
+    <input type="text" id="f_structure_other" placeholder="פרטו את חומר המבנה" style="display:none;margin-top:10px;width:100%;">
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">יעוץ מומחים</h2>
+    <div class="chip-grid" id="expertConsult">
+      <label class="chip"><input type="checkbox" value="קונסטרוקטור">קונסטרוקטור</label>
+      <label class="chip"><input type="checkbox" value="חשמלאי">חשמלאי</label>
+      <label class="chip"><input type="checkbox" value="יועצי בטיחות אש">יועצי בטיחות אש</label>
+      <label class="chip"><input type="checkbox" value="מערכות גילוי">מערכות גילוי</label>
+      <label class="chip"><input type="checkbox" value="מערכות כיבוי">מערכות כיבוי</label>
+      <label class="chip"><input type="checkbox" id="expertOtherCheck" value="אחר">אחר</label>
+    </div>
+    <input type="text" id="f_expert_other" placeholder="פרטו איזה יועץ נוסף" style="display:none;margin-top:10px;width:100%;">
+    <label class="field" style="margin-top:12px;"><span class="lbl">הערות / פרטי היוועצות</span><textarea id="f_expert_notes" placeholder="פרטים נוספים: מי נועץ, מתי, מסקנות עיקריות וכו'"></textarea></label>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">תיאור העבודה והנחיות</h2>
+    <label class="field"><span class="lbl">תיאור העבודה ומטרתה</span><textarea id="f_desc"></textarea></label>
+    <label class="field"><span class="lbl">הנחיות מקדימות לעבודה</span><textarea id="f_pre"></textarea></label>
+    <label class="field"><span class="lbl">נטרול הגנות אש ותשתיות באזור העבודה</span>
+      <div class="chip-grid" id="disableChip">
+        <label class="chip"><input type="radio" name="disable_needed" value="לא נדרש">לא נדרש</label>
+        <label class="chip"><input type="radio" name="disable_needed" value="נדרש">נדרש — פרטו למטה</label>
+      </div>
+      <textarea id="f_disable" style="margin-top:8px;" placeholder="פרטו אילו הגנות/תשתיות ינוטרלו"></textarea>
+    </label>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">צ'קליסט הנחיות לפני תחילת עבודה</h2>
+    <div id="itemsOriginal"></div>
+  </section>
+
+  <section class="block" id="hotWorkSection">
+    <h2 class="block-title">אישור עבודה באש גלויה (PCB-127/5)</h2>
+    <p class="hint">למילוי בכל פעילות הכוללת חיתוך, ריתוך, השחזה, מבער, או כל מקור אחר לחום/ניצוצות. מבוסס על נספח א' לנוהל PCB-127/5.</p>
+
+    <div class="field-grid">
+      <label class="field"><span class="lbl">שם צופה האש</span><input type="text" id="hw_watcher"></label>
+      <label class="field"><span class="lbl">מיקום העבודה</span><input type="text" id="hw_location"></label>
+      <label class="field"><span class="lbl">תאריך תחילת עבודה</span><input type="date" id="hw_start"></label>
+      <label class="field"><span class="lbl">תאריך סיום עבודה</span><input type="date" id="hw_end"></label>
+    </div>
+
+    <div class="confirm-list" id="hwChecklist">
+      <label class="confirm-item"><input type="checkbox" value="ציוד כיבוי אש מתאים (מטפה/גלגלון/זרנוקים) זמין ותקין למקום העבודה">ציוד כיבוי אש מתאים (מטפה/גלגלון/זרנוקים) זמין ותקין למקום העבודה</label>
+      <label class="confirm-item"><input type="checkbox" value="נטרול מערכות גילוי/כיבוי אוטומטי (אם נדרש) בוצע ותואם עם אחזקה"> נטרול מערכות גילוי/כיבוי אוטומטי (אם נדרש) בוצע ותואם עם אחזקה</label>
+      <label class="confirm-item"><input type="checkbox" value="ציוד מגן אישי לעבודה חמה תקין ובתוקף">ציוד מגן אישי לעבודה חמה תקין ובתוקף</label>
+      <label class="confirm-item"><input type="checkbox" value="חומרים דליקים הורחקו לרדיוס 10 מ' לפחות, או בודדו/כוסו ביריעות עמידות אש">חומרים דליקים הורחקו לרדיוס 10 מ' לפחות, או בודדו/כוסו ביריעות עמידות אש</label>
+      <label class="confirm-item"><input type="checkbox" value="ברזנט/יריעה עמידת אש מוצבת מתחת למקום העבודה">ברזנט/יריעה עמידת אש מוצבת מתחת למקום העבודה</label>
+      <label class="confirm-item"><input type="checkbox" value="אזור העבודה הורטב במים בטרם תחילת העבודה (במידת האפשר)">אזור העבודה הורטב במים בטרם תחילת העבודה (במידת האפשר)</label>
+      <label class="confirm-item"><input type="checkbox" value="פתחים/דלתות אוטמו למניעת בריחת ניצוצות">פתחים/דלתות אוטמו למניעת בריחת ניצוצות</label>
+      <label class="confirm-item"><input type="checkbox" value="האזור מאוורר, ואין ריח דלק/גז או אווירה נפיצה">האזור מאוורר, ואין ריח דלק/גז או אווירה נפיצה</label>
+      <label class="confirm-item"><input type="checkbox" value="דרך המילוט משטח העבודה פנויה וברורה, והצוות מכיר אותה">דרך המילוט משטח העבודה פנויה וברורה, והצוות מכיר אותה</label>
+      <label class="confirm-item"><input type="checkbox" value="צופה האש צויד באמצעי כיבוי מתאימים ותודרך לפני תחילת העבודה">צופה האש צויד באמצעי כיבוי מתאימים ותודרך לפני תחילת העבודה</label>
+      <label class="confirm-item"><input type="checkbox" value="נקבע פיקוח 60 דקות מיידיות + 4 שעות המשך לאחר סיום העבודה">נקבע פיקוח 60 דקות מיידיות + 4 שעות המשך לאחר סיום העבודה</label>
+      <label class="confirm-item"><input type="checkbox" value="מבצע העבודה (קבלן) חתום על נוהל קבלנים PCB 151-6">מבצע העבודה (קבלן) חתום על נוהל קבלנים PCB 151-6</label>
+    </div>
+
+    <label class="field"><span class="lbl">האם העבודה בשעות חריגות?</span>
+      <div class="chip-grid" id="hwOddHours">
+        <label class="chip"><input type="radio" name="hw_odd_hours" value="לא">לא</label>
+        <label class="chip"><input type="radio" name="hw_odd_hours" value="כן">כן</label>
+      </div>
+    </label>
+    <p class="hint" id="hwOddHoursWarning" style="display:none;color:var(--bad);font-weight:600;">⚠️ בעבודה בשעות חריגות אסורה עבודת יחיד — נדרש פיקוח מתמיד וישיר.</p>
+
+    <div class="jsa-legend" style="margin-top:16px;">
+      <div style="font-weight:700;margin-bottom:4px;">טלפונים בחירום</div>
+      <div>שומר בשער ראשי: 054-9050639</div>
+      <div>שומר שער עליון: 054-9050647</div>
+      <div>רי"ץ אחזקה (שמואל כהן): 050-5769390</div>
+      <div>מנהל פרויקטים (סעיד ברכה): 054-9050630</div>
+      <div>ממונה בטיחות (שלמה רזון): 052-7027270</div>
+      <div>ממונה איכות סביבה (נתן אנגל): 054-9050651</div>
+      <div>מנהלת משק (פרחיה בוחבוט): 054-9050605</div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">סקר סיכונים (JSA)</h2>
+    <p class="hint">מבוסס על תבנית סקר הסיכונים של PCB. לכל שלב/פעולה — הגדירו תרחיש מזיק אפשרי, דרגו הסתברות וחומרה, קבעו פעולה מונעת ודרגו מחדש לאחר יישומה.</p>
+
+    <div class="field-grid">
+      <label class="field"><span class="lbl">מס' טופס JSA</span><input type="text" id="jsa_form_num"></label>
+      <label class="field"><span class="lbl">ממלא הטופס (שם ושם משפחה)</span><input type="text" id="jsa_filler"></label>
+      <label class="field"><span class="lbl">נציג המחלקה</span><input type="text" id="jsa_dept_rep"></label>
+      <label class="field"><span class="lbl">עמדת עבודה / תחנה</span><input type="text" id="jsa_station"></label>
+    </div>
+
+    <div class="jsa-legend">
+      <div><strong>הסתברות:</strong> 1=נמוכה מאוד · 2=נמוכה · 3=בינונית · 4=גבוהה</div>
+      <div><strong>חומרה:</strong> 1=שולית · 2=קלה · 3=בינונית · 4=קריטית</div>
+    </div>
+
+    <div id="jsaRows"></div>
+    <button class="btn btn-secondary" type="button" id="btnAddJsaRow" style="width:100%;margin-top:6px;">➕ הוסף שלב/סיכון</button>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">תמונות מצורפות</h2>
+    <p class="hint">צלמו או העלו תמונות של ממצאים/סיכונים שזוהו בסיור. התמונות יופיעו בהדפסה/PDF, ומצורפות אוטומטית כשמשתמשים בכפתור "שתף כצרופה".</p>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" multiple style="display:none;">
+    <button class="btn btn-secondary" type="button" id="btnAddPhoto" style="width:100%;">📷 צלם / הוסף תמונה</button>
+    <div id="photoGallery" class="photo-gallery"></div>
+  </section>
+
+  <section class="block critical-box">
+    <h2 class="block-title critical-label">ממצא קריטי (אם קיים)</h2>
+    <p class="hint">העבודה לא תחל / תופסק עד לתיקון</p>
+    <textarea id="f_critical" placeholder="לדוגמה: שוחה פתוחה ללא גידור בנתיב העבודה"></textarea>
+  </section>
+
+  <section class="block">
+    <h2 class="block-title">אישור וחתימות</h2>
+    <p class="hint" style="margin-top:-6px;margin-bottom:12px;">מאשר שקיבלתי את כל ההוראות הקשורות בביצוע העבודה, בהיבט הבטיחותי והסביבתי, ואנקוט בכל אמצעי הזהירות הדרושים במהלך עבודתי.</p>
+    <div class="sig-row">
+      <div class="sig-col">
+        <span class="lbl">חתימת הקבלן / בא כוחו</span>
+        <canvas class="sig" id="sig1"></canvas>
+        <button class="sig-clear" data-target="sig1">נקה חתימה</button>
+      </div>
+      <div class="sig-col">
+        <span class="lbl">חתימת ממונה הבטיחות / מנהל אחזקה</span>
+        <canvas class="sig" id="sig2"></canvas>
+        <button class="sig-clear" data-target="sig2">נקה חתימה</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="actions">
+  <button class="btn btn-primary" id="btnExport">הפק סיכום טקסט</button>
+  <button class="btn btn-secondary" id="btnEmail">שתף כצרופה</button>
+  <button class="btn btn-secondary" id="btnMailto">פתח ב-Mail</button>
+  <button class="btn btn-secondary" id="btnPrint">הדפס / שמור כ-PDF</button>
+  <button class="btn btn-ghost" id="btnReset">איפוס טופס</button>
+</div>
+<div class="export-panel" style="padding-top:0;margin-top:-10px;">
+  <p class="hint">"שתף כצרופה" פותח את תפריט השיתוף של האייפד — Mail יופיע שם עם הקובץ מצורף. "פתח ב-Mail" פותח ישירות את אפליקציית המייל המובנית עם הסיכום בגוף ההודעה (בלי קובץ מצורף) — עובד תמיד, גם אם השיתוף לא זמין.</p>
+  <p class="hint">בהדפסה: Safari באייפד לא תמיד עובר לרוחב אוטומטית. אם התצוגה המקדימה מציגה לאורך, סובבו אותה במחוות שתי אצבעות (Pinch/Rotate) על התצוגה המקדימה כדי לעבור לרוחב לפני ההדפסה.</p>
+</div>
+
+<div class="export-panel" id="exportPanel" style="display:none;">
+  <div class="export-box" id="exportBox"></div>
+  <div class="hint">אפשר להעתיק את הטקסט ולשלוח בוואטסאפ/מייל.</div>
+</div>
+
+<script>
+const ORIGINAL = [
+  ["1","תסקרי בדיקה עבור מתקני הרמה ואביזרים"],
+  ["2","סביבת עבודה פנויה מפסולת וחומרים דליקים"],
+  ["3","נטרול גלאי אש ומטפים אוטומטיים בלוחות חשמל (אם נדרש)"],
+  ["4","האם יש פעילות המערבת עבודה חמה? אם כן — יש לפנות לנוהל עבודה חמה"],
+  ["5","ציוד המשמש לעבודה (כגון ציוד מטלטל, כלי עבודה וכו') תקין ומאושר לשימוש"],
+  ["6","גידור אזור העבודה ושילוט אזהרה מתאים"],
+];
+const ALL_ITEMS = [...ORIGINAL];
+const state = {};
+
+const TWO_OPTION_ITEMS = {
+  '1': { yes: 'כן', na: 'לא רלוונטי' },
+  '4': { yes: 'כן', na: 'לא רלוונטי' },
+  '6': { yes: 'נדרש', na: 'לא נדרש' },
+};
+function buildItems(list, containerId){
+  const c = document.getElementById(containerId);
+  list.forEach(([num, text])=>{
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.id = 'item-'+num;
+    const twoOpt = TWO_OPTION_ITEMS[num];
+    const yesLabel = twoOpt ? twoOpt.yes : 'כן';
+    const naLabel = twoOpt ? twoOpt.na : 'לא רלוונטי';
+    const noBtn = twoOpt ? '' : `<button class="status-btn" data-v="no" data-num="${num}">לא</button>`;
+    const noteField = twoOpt ? '' : `<input class="item-note" data-num="${num}" placeholder="הערה (למה זה 'לא'?)">`;
+    div.innerHTML = `
+      <div class="item-top">
+        <div class="item-num">${num}</div>
+        <div class="item-text">${text}</div>
+      </div>
+      <div class="status-row">
+        <button class="status-btn" data-v="yes" data-num="${num}">${yesLabel}</button>
+        ${noBtn}
+        <button class="status-btn" data-v="na" data-num="${num}">${naLabel}</button>
+      </div>
+      ${noteField}
+    `;
+    c.appendChild(div);
+  });
+}
+buildItems(ORIGINAL, 'itemsOriginal');
+
+// Item 1 (lifting-equipment inspection reports) gets an inline detail field
+// and a dedicated photo-capture shortcut that feeds the shared photo gallery below.
+(function setupItem1Extras(){
+  const item1 = document.getElementById('item-1');
+  if(!item1) return;
+  const wrap = document.createElement('div');
+  wrap.style.marginTop = '10px';
+  wrap.innerHTML = `
+    <input type="text" id="f_item1_detail" placeholder="פרטי התסקיר (מס' תסקיר, תוקף, גורם מאשר)">
+    <button type="button" id="item1AddPhoto" class="btn btn-secondary" style="width:100%;padding:9px;font-size:13px;margin-top:8px;">📷 צלם / הוסף תסקיר בדיקה</button>
+  `;
+  item1.appendChild(wrap);
+  document.getElementById('item1AddPhoto').addEventListener('click', ()=>{
+    pendingPhotoCaption = 'תסקיר בדיקה — מתקני הרמה ואביזרים';
+    document.getElementById('photoInput').click();
+  });
+})();
+
+// Item 4 (hot work?) gets a link to the hot-work permit section (PCB-127/5),
+// revealed only when the person answers "כן" — literally acting on the item's
+// own instruction "אם כן — יש לפנות לנוהל עבודה חמה".
+(function setupItem4Link(){
+  const item4 = document.getElementById('item-4');
+  if(!item4) return;
+  const wrap = document.createElement('div');
+  wrap.id = 'hw_link_wrap';
+  wrap.style.cssText = 'margin-top:10px;display:none;';
+  wrap.innerHTML = `<a href="#hotWorkSection" id="hw_link" class="btn btn-primary hw-link">🔗 מעבר לטופס אישור עבודה באש גלויה (PCB-127/5)</a>`;
+  item4.appendChild(wrap);
+  document.getElementById('hw_link').addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.getElementById('hotWorkSection').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+  item4.querySelectorAll('.status-btn[data-num="4"]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      wrap.style.display = (btn.dataset.v === 'yes') ? 'block' : 'none';
+    });
+  });
+})();
+
+document.querySelectorAll('#hwOddHours .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    document.querySelectorAll('#hwOddHours .chip').forEach(c=>c.classList.remove('on'));
+    if(input.checked) input.closest('.chip').classList.add('on');
+    document.getElementById('hwOddHoursWarning').style.display = (input.checked && input.value==='כן') ? 'block' : 'none';
+  });
+});
+
+// ---- JSA risk matrix (dynamic rows, based on the PCB JSA Excel template) ----
+let jsaRows = [];
+let jsaCounter = 0;
+
+function addJsaRow(){
+  jsaRows.push({
+    id: 'j'+(jsaCounter++),
+    step: '', scenario: '',
+    prob1: '', sev1: '',
+    action: '', done: false,
+    prob2: '', sev2: '',
+  });
+  renderJsaRows();
+}
+
+function jsaScoreClass(score){
+  if(!score) return '';
+  if(score <= 3) return 'low';
+  if(score <= 8) return 'med';
+  return 'high';
+}
+
+function jsaEscape(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function jsaSelectHtml(cls, id, val){
+  let opts = '<option value="">–</option>';
+  for(let i=1;i<=4;i++) opts += `<option value="${i}" ${String(val)===String(i)?'selected':''}>${i}</option>`;
+  return `<select class="jsa-select ${cls}" data-id="${id}">${opts}</select>`;
+}
+
+function renderJsaRows(){
+  const c = document.getElementById('jsaRows');
+  c.innerHTML = '';
+  jsaRows.forEach((row, idx)=>{
+    const s1 = (Number(row.prob1)||0) * (Number(row.sev1)||0);
+    const s2 = (Number(row.prob2)||0) * (Number(row.sev2)||0);
+    const div = document.createElement('div');
+    div.className = 'jsa-row';
+    div.innerHTML = `
+      <div class="jsa-row-head">
+        <span class="jsa-row-num">שלב ${idx+1}</span>
+        <button type="button" class="jsa-remove" data-id="${row.id}">✕ הסר שלב</button>
+      </div>
+      <input type="text" class="jsa-step" data-id="${row.id}" placeholder="תיאור השלב/פעולה" value="${jsaEscape(row.step)}">
+      <textarea class="jsa-scenario" data-id="${row.id}" placeholder="תרחישים מזיקים אפשריים">${jsaEscape(row.scenario)}</textarea>
+
+      <div class="jsa-subtitle">הערכה ראשונית</div>
+      <div class="jsa-score-row">
+        <div><label>הסתברות</label>${jsaSelectHtml('jsa-prob1', row.id, row.prob1)}</div>
+        <div><label>חומרה</label>${jsaSelectHtml('jsa-sev1', row.id, row.sev1)}</div>
+        <div><label>מכפלה</label><div class="jsa-badge ${jsaScoreClass(s1)}">${s1||'–'}</div></div>
+      </div>
+
+      <textarea class="jsa-action" data-id="${row.id}" placeholder="פעילות מונעת נדרשת" style="margin-top:10px;">${jsaEscape(row.action)}</textarea>
+      <label class="jsa-done-check"><input type="checkbox" class="jsa-done" data-id="${row.id}" ${row.done?'checked':''}> בוצע</label>
+
+      <div class="jsa-subtitle">הערכה לאחר יישום פעולה מונעת</div>
+      <div class="jsa-score-row">
+        <div><label>הסתברות</label>${jsaSelectHtml('jsa-prob2', row.id, row.prob2)}</div>
+        <div><label>חומרה</label>${jsaSelectHtml('jsa-sev2', row.id, row.sev2)}</div>
+        <div><label>מכפלה</label><div class="jsa-badge ${jsaScoreClass(s2)}">${s2||'–'}</div></div>
+      </div>
+    `;
+    c.appendChild(div);
+  });
+  bindJsaEvents();
+}
+
+function bindJsaEvents(){
+  const findRow = idAttr => jsaRows.find(x=>x.id===idAttr);
+  document.querySelectorAll('.jsa-step').forEach(el=>el.addEventListener('input', e=>{
+    const r = findRow(e.target.dataset.id); if(r) r.step = e.target.value;
+  }));
+  document.querySelectorAll('.jsa-scenario').forEach(el=>el.addEventListener('input', e=>{
+    const r = findRow(e.target.dataset.id); if(r) r.scenario = e.target.value;
+  }));
+  document.querySelectorAll('.jsa-action').forEach(el=>el.addEventListener('input', e=>{
+    const r = findRow(e.target.dataset.id); if(r) r.action = e.target.value;
+  }));
+  document.querySelectorAll('.jsa-done').forEach(el=>el.addEventListener('change', e=>{
+    const r = findRow(e.target.dataset.id); if(r) r.done = e.target.checked;
+  }));
+  ['prob1','sev1','prob2','sev2'].forEach(field=>{
+    document.querySelectorAll('.jsa-'+field).forEach(el=>el.addEventListener('change', e=>{
+      const r = findRow(e.target.dataset.id);
+      if(r){ r[field] = e.target.value; renderJsaRows(); }
+    }));
+  });
+  document.querySelectorAll('.jsa-remove').forEach(el=>el.addEventListener('click', e=>{
+    jsaRows = jsaRows.filter(x=>x.id!==e.target.dataset.id);
+    renderJsaRows();
+  }));
+}
+
+document.getElementById('btnAddJsaRow').addEventListener('click', addJsaRow);
+addJsaRow(); // start with one empty row
+
+document.querySelectorAll('.status-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const num = btn.dataset.num;
+    const v = btn.dataset.v;
+    const item = document.getElementById('item-'+num);
+    state[num] = state[num] || {};
+    state[num].status = v;
+    item.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    item.classList.remove('no','na');
+    if(v==='no' || v==='app') item.classList.add('no');
+    if(v==='na') item.classList.add('na');
+    updateProgress();
+  });
+});
+document.querySelectorAll('.item-note').forEach(inp=>{
+  inp.addEventListener('input', ()=>{
+    const num = inp.dataset.num;
+    state[num] = state[num] || {};
+    state[num].note = inp.value;
+  });
+});
+
+const ALL_ITEM_IDS = new Set(ALL_ITEMS.map(([num])=>num));
+function updateProgress(){
+  const answered = Object.keys(state).filter(k=>ALL_ITEM_IDS.has(k) && state[k].status).length;
+  const pct = Math.round((answered/ALL_ITEMS.length)*100);
+  document.getElementById('progressBar').style.width = pct+'%';
+  document.getElementById('progressLabel').textContent = `${answered} מתוך ${ALL_ITEMS.length} סעיפים נענו`;
+}
+
+// chips (multi-select work types) — the <input> is nested inside the <label>,
+// so a native click already toggles it; listening on 'change' (not re-toggling on 'click')
+// avoids a double-toggle that cancelled itself out.
+document.querySelectorAll('#workTypes .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    input.closest('.chip').classList.toggle('on', input.checked);
+  });
+});
+document.getElementById('workOtherCheck').addEventListener('change', (e)=>{
+  const otherField = document.getElementById('f_worktype_other');
+  otherField.style.display = e.target.checked ? 'block' : 'none';
+  if(!e.target.checked) otherField.value = '';
+});
+document.querySelectorAll('#expertConsult .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    input.closest('.chip').classList.toggle('on', input.checked);
+  });
+});
+document.getElementById('expertOtherCheck').addEventListener('change', (e)=>{
+  const otherField = document.getElementById('f_expert_other');
+  otherField.style.display = e.target.checked ? 'block' : 'none';
+  if(!e.target.checked) otherField.value = '';
+});
+function getExpertsText(){
+  const vals = [...document.querySelectorAll('#expertConsult input:checked')].map(i=>{
+    if(i.value === 'אחר'){
+      const custom = document.getElementById('f_expert_other').value.trim();
+      return 'אחר' + (custom ? (': ' + custom) : '');
+    }
+    return i.value;
+  });
+  return vals.join(', ') || '—';
+}
+function getWorkTypesText(){
+  const vals = [...document.querySelectorAll('#workTypes input:checked')].map(i=>{
+    if(i.value === 'אחר'){
+      const custom = document.getElementById('f_worktype_other').value.trim();
+      return 'אחר' + (custom ? (': ' + custom) : '');
+    }
+    return i.value;
+  });
+  return vals.join(', ') || '—';
+}
+document.querySelectorAll('#structureType .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    document.querySelectorAll('#structureType .chip').forEach(c=>c.classList.remove('on'));
+    if(input.checked) input.closest('.chip').classList.add('on');
+    const otherField = document.getElementById('f_structure_other');
+    otherField.style.display = (input.checked && input.value==='אחר') ? 'block' : 'none';
+    if(input.checked && input.value!=='אחר') otherField.value='';
+  });
+});
+function structureName(){
+  const chosen = (document.querySelector('input[name="structure"]:checked')||{}).value;
+  if(!chosen) return '—';
+  if(chosen==='אחר') return 'אחר' + (document.getElementById('f_structure_other').value.trim() ? (': ' + document.getElementById('f_structure_other').value.trim()) : '');
+  return chosen;
+}
+document.querySelectorAll('#disableChip .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    document.querySelectorAll('#disableChip .chip').forEach(c=>c.classList.remove('on'));
+    if(input.checked) input.closest('.chip').classList.add('on');
+    const ta = document.getElementById('f_disable');
+    if(input.value === 'לא נדרש'){
+      ta.value = '';
+      ta.style.display = 'none';
+    } else {
+      ta.style.display = 'block';
+      ta.focus();
+    }
+  });
+});
+document.querySelectorAll('#managerChip .chip input').forEach(input=>{
+  input.addEventListener('change', ()=>{
+    input.closest('.chip').classList.toggle('on', input.checked);
+    const otherField = document.getElementById('f_manager_other');
+    const otherChecked = document.getElementById('managerOtherCheck').checked;
+    otherField.style.display = otherChecked ? 'block' : 'none';
+    if(!otherChecked) otherField.value = '';
+  });
+});
+function managerName(){
+  const vals = [...document.querySelectorAll('#managerChip input:checked')].map(i=>{
+    if(i.value === 'אחר'){
+      const custom = document.getElementById('f_manager_other').value.trim();
+      return 'אחר' + (custom ? (': ' + custom) : '');
+    }
+    return i.value;
+  });
+  return vals.join(', ') || '—';
+}
+
+// signature pads
+function setupSig(id){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  function resize(){
+    const ratio = window.devicePixelRatio||1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width*ratio;
+    canvas.height = rect.height*ratio;
+    ctx.scale(ratio,ratio);
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#1F2933';
+  }
+  resize();
+  let drawing=false, last=null;
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return {x: t.clientX-rect.left, y: t.clientY-rect.top};
+  }
+  function start(e){ drawing=true; last=pos(e); e.preventDefault(); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+    last = p; e.preventDefault();
+  }
+  function end(){ drawing=false; }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start);
+  canvas.addEventListener('touchmove', move);
+  canvas.addEventListener('touchend', end);
+}
+setupSig('sig1'); setupSig('sig2');
+document.querySelectorAll('.sig-clear').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const canvas = document.getElementById(btn.dataset.target);
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  });
+});
+
+// default date = today
+document.getElementById('f_date').value = new Date().toISOString().slice(0,10);
+
+// ---- photo capture / gallery ----
+let photos = []; // {id, dataUrl, caption, file}
+let photoCounter = 0;
+let pendingPhotoCaption = ''; // set by item-specific "add photo" buttons (e.g. item 1) before opening the picker
+
+document.getElementById('btnAddPhoto').addEventListener('click', ()=>{
+  pendingPhotoCaption = '';
+  document.getElementById('photoInput').click();
+});
+document.getElementById('photoInput').addEventListener('change', (e)=>{
+  const captionForThisBatch = pendingPhotoCaption;
+  [...e.target.files].forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      photos.push({ id: 'p'+(photoCounter++), dataUrl: ev.target.result, caption: captionForThisBatch, file });
+      renderGallery();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = ''; // allow re-adding the same file later
+  pendingPhotoCaption = '';
+});
+
+function renderGallery(){
+  const g = document.getElementById('photoGallery');
+  g.innerHTML = '';
+  photos.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'photo-card';
+    card.innerHTML = `
+      <img src="${p.dataUrl}" alt="תמונה מצורפת">
+      <input type="text" class="photo-caption" placeholder="תיאור קצר (מיקום/ממצא)" data-id="${p.id}">
+      <button type="button" class="photo-remove" data-id="${p.id}">✕ הסר</button>
+    `;
+    card.querySelector('.photo-caption').value = p.caption;
+    g.appendChild(card);
+  });
+  g.querySelectorAll('.photo-caption').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const ph = photos.find(x=>x.id===inp.dataset.id);
+      if(ph) ph.caption = inp.value;
+    });
+  });
+  g.querySelectorAll('.photo-remove').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      photos = photos.filter(x=>x.id!==btn.dataset.id);
+      renderGallery();
+    });
+  });
+}
+
+// build summary text (shared by "הפק סיכום" and "שלח במייל")
+function buildSummaryText(){
+  const val = id => document.getElementById(id).value.trim();
+  const workTypes = getWorkTypesText();
+  const structure = structureName();
+
+  let lines = [];
+  lines.push('סקר ראשוני לקבלן — סיכום');
+  lines.push('תאריך: ' + (val('f_date')||'—'));
+  lines.push('קבלן: ' + (val('f_company')||'—') + '  |  ממונה: ' + managerName());
+  lines.push('אזור: ' + (val('f_area')||'—') + '  |  משך: ' + (val('f_hours')||'—'));
+  lines.push('מזמין העבודה: ' + (val('f_orderer')||'—') + '  |  תיאום מול מנהל מחלקה: ' + (val('f_dept_coord')||'—'));
+  lines.push('סוג עבודה: ' + workTypes);
+  lines.push('חומר מבנה/שלד: ' + structure);
+  lines.push('יעוץ מומחים: ' + getExpertsText());
+  if(val('f_expert_notes')) lines.push('הערות היוועצות: ' + val('f_expert_notes'));
+  lines.push('');
+  if(val('f_desc')) lines.push('תיאור העבודה: ' + val('f_desc'));
+  if(val('f_pre')) lines.push('הנחיות מקדימות: ' + val('f_pre'));
+  const disableChoice = (document.querySelector('input[name="disable_needed"]:checked')||{}).value;
+  if(disableChoice === 'לא נדרש') lines.push('נטרול הגנות: לא נדרש');
+  else if(val('f_disable')) lines.push('נטרול הגנות: ' + val('f_disable'));
+  lines.push('');
+  lines.push('--- צ׳קליסט ---');
+
+  const label = {yes:'✓ כן', no:'✗ לא', na:'– לא רלוונטי'};
+  ALL_ITEMS.forEach(([num,text])=>{
+    const s = state[num] || {};
+    const twoOpt = TWO_OPTION_ITEMS[num];
+    const st = s.status
+      ? (twoOpt ? (s.status==='yes' ? '✓ ' + twoOpt.yes : '– ' + twoOpt.na) : label[s.status])
+      : '○ טרם נענה';
+    let line = `${num}. ${st} — ${text}`;
+    if(s.status==='no' && s.note) line += `  [הערה: ${s.note}]`;
+    if(num==='1'){
+      const detail = val('f_item1_detail');
+      if(detail) line += `  [פרטים: ${detail}]`;
+    }
+    lines.push(line);
+  });
+
+  const crit = val('f_critical');
+  lines.push('');
+
+  // JSA risk matrix — only included if the person actually filled in a row
+  const jsaAnswered = jsaRows.some(r => r.step || r.scenario || r.prob1 || r.sev1 || r.action);
+  if(jsaAnswered || val('jsa_form_num') || val('jsa_station')){
+    lines.push('--- סקר סיכונים (JSA) ---');
+    if(val('jsa_form_num')) lines.push('מס\' טופס JSA: ' + val('jsa_form_num'));
+    if(val('jsa_filler')) lines.push('ממלא הטופס: ' + val('jsa_filler'));
+    if(val('jsa_dept_rep')) lines.push('נציג המחלקה: ' + val('jsa_dept_rep'));
+    if(val('jsa_station')) lines.push('עמדת עבודה/תחנה: ' + val('jsa_station'));
+    jsaRows.forEach((row, idx)=>{
+      if(!(row.step || row.scenario || row.prob1 || row.sev1 || row.action)) return;
+      const s1 = (Number(row.prob1)||0) * (Number(row.sev1)||0);
+      const s2 = (Number(row.prob2)||0) * (Number(row.sev2)||0);
+      lines.push(`שלב ${idx+1}: ${row.step || '—'}`);
+      if(row.scenario) lines.push(`  תרחיש: ${row.scenario}`);
+      lines.push(`  הערכה ראשונית: הסתברות ${row.prob1||'–'} × חומרה ${row.sev1||'–'} = ${s1||'–'}`);
+      if(row.action) lines.push(`  פעולה מונעת: ${row.action}  [${row.done?'בוצע':'טרם בוצע'}]`);
+      lines.push(`  הערכה לאחר: הסתברות ${row.prob2||'–'} × חומרה ${row.sev2||'–'} = ${s2||'–'}`);
+    });
+    lines.push('');
+  }
+
+  // Hot-work permit (PCB-127/5) — only included if actually used
+  const hwChecked = [...document.querySelectorAll('#hwChecklist input:checked')].map(i=>i.value);
+  const hwOddHours = (document.querySelector('input[name="hw_odd_hours"]:checked')||{}).value;
+  const hwAnswered = hwChecked.length || val('hw_watcher') || val('hw_location') || hwOddHours;
+  if(hwAnswered){
+    lines.push('--- אישור עבודה באש גלויה (PCB-127/5) ---');
+    if(val('hw_watcher')) lines.push('צופה אש: ' + val('hw_watcher'));
+    if(val('hw_location')) lines.push('מיקום העבודה: ' + val('hw_location'));
+    if(val('hw_start')) lines.push('תחילת עבודה: ' + val('hw_start'));
+    if(val('hw_end')) lines.push('סיום עבודה: ' + val('hw_end'));
+    if(hwOddHours) lines.push('עבודה בשעות חריגות: ' + hwOddHours);
+    if(hwChecked.length){
+      lines.push('סעיפים שאושרו:');
+      hwChecked.forEach(v => lines.push('  ✓ ' + v));
+    }
+    lines.push('');
+  }
+
+  if(crit){
+    lines.push('🔴 ממצא קריטי: ' + crit);
+    lines.push('העבודה לא תחל / תופסק עד לתיקון.');
+  } else {
+    lines.push('לא דווח ממצא קריטי.');
+  }
+
+  const noCount = ALL_ITEMS.filter(([n])=>state[n]&&state[n].status==='no').length;
+  lines.push('');
+  lines.push(`סה"כ סעיפים שסומנו "לא": ${noCount}`);
+
+  if(photos.length){
+    lines.push('');
+    lines.push(`--- תמונות מצורפות (${photos.length}) ---`);
+    photos.forEach((p,i)=> lines.push(`${i+1}. ${p.caption || '(ללא תיאור)'}`));
+    lines.push('(התמונות עצמן מופיעות בהדפסה/PDF, ומצורפות בפועל כשמשתמשים ב"שתף כצרופה")');
+  }
+
+  return lines.join('\n');
+}
+
+document.getElementById('btnExport').addEventListener('click', ()=>{
+  document.getElementById('exportBox').textContent = buildSummaryText();
+  document.getElementById('exportPanel').style.display = 'block';
+  document.getElementById('exportPanel').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
+
+function downloadTextFile(filename, text){
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
+document.getElementById('btnEmail').addEventListener('click', async ()=>{
+  const val = id => document.getElementById(id).value.trim();
+  const text = buildSummaryText();
+  document.getElementById('exportBox').textContent = text;
+  document.getElementById('exportPanel').style.display = 'block';
+
+  const safeCompany = (val('f_company')||'קבלן').replace(/[\\/:*?"<>|]/g,'-');
+  const filename = `סקר-ראשוני-${safeCompany}-${val('f_date')||''}.txt`;
+  const subject = 'סקר ראשוני לקבלן — ' + (val('f_company')||'');
+
+  // Best path: Web Share API with real files — on iPad/iPhone Safari this opens the
+  // native share sheet, where Mail appears as an option and the text file + every
+  // captured photo land as real attachments.
+  try{
+    const textFile = new File([text], filename, {type:'text/plain'});
+    const photoFiles = photos.map((p,i)=> new File([p.file], `תמונה-${i+1}.jpg`, {type:p.file.type||'image/jpeg'}));
+    const allFiles = [textFile, ...photoFiles];
+    if(navigator.canShare && navigator.canShare({files:allFiles})){
+      await navigator.share({files:allFiles, title:subject, text:subject});
+      return;
+    }
+  }catch(err){
+    if(err && err.name === 'AbortError') return; // user cancelled the share sheet
+    // otherwise fall through to the fallback below
+  }
+
+  // Fallback (desktop / unsupported browsers): mailto can't carry real attachments,
+  // so download the text file and every photo, then open a mail draft with the
+  // summary in the body and a note to attach the downloaded files manually.
+  downloadTextFile(filename, text);
+  photos.forEach((p,i)=>{
+    const url = URL.createObjectURL(p.file);
+    const a = document.createElement('a');
+    a.href = url; a.download = `תמונה-${i+1}.jpg`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  });
+  const photoNote = photos.length ? `\n\n(${photos.length} תמונות הורדו גם הן למכשיר — נא לצרף את כולן ידנית.)` : '';
+  const body = 'קובץ הסיכום (' + filename + ') הורד למכשיר שלך — נא לצרף אותו ידנית להודעה.' + photoNote + '\n\n' + text;
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+});
+
+// Guaranteed path: opens the built-in Mail app directly via mailto:, with the summary
+// as the message body. No attachment (mailto can't carry files), but this always works —
+// no dependency on Web Share support. mailto URLs have a practical length limit, so long
+// summaries are trimmed with a note pointing back to "שתף כצרופה" for the full text.
+document.getElementById('btnMailto').addEventListener('click', ()=>{
+  const val = id => document.getElementById(id).value.trim();
+  const text = buildSummaryText();
+  document.getElementById('exportBox').textContent = text;
+  document.getElementById('exportPanel').style.display = 'block';
+
+  const subject = 'סקר ראשוני לקבלן — ' + (val('f_company')||'');
+  const MAX_BODY = 1800;
+  let body = text;
+  if(photos.length){
+    body += `\n\n(${photos.length} תמונות מצורפות לסקר — כפתור זה לא יכול לצרף אותן; השתמשו ב"שתף כצרופה")`;
+  }
+  if(body.length > MAX_BODY){
+    body = body.slice(0, MAX_BODY) + '\n\n[...הסיכום המלא ארוך מדי לצירוף אוטומטי כאן — השתמשו ב"שתף כצרופה" לקבלת הקובץ המלא]';
+  }
+  window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+});
+
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  if(!confirm('לאפס את כל הטופס?')) return;
+  document.querySelectorAll('input[type=text],input[type=number],textarea').forEach(i=>i.value='');
+  document.querySelectorAll('input[type=checkbox]').forEach(i=>i.checked=false);
+  document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  document.querySelectorAll('.status-btn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.item').forEach(i=>i.classList.remove('no','na'));
+  document.querySelectorAll('.item-note').forEach(i=>i.value='');
+  for(const k in state) delete state[k];
+  updateProgress();
+  document.getElementById('f_date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('f_manager_other').style.display = 'none';
+  document.getElementById('f_worktype_other').style.display = 'none';
+  document.getElementById('f_structure_other').style.display = 'none';
+  document.getElementById('f_expert_other').style.display = 'none';
+  document.getElementById('f_disable').style.display = 'block';
+  photos = [];
+  renderGallery();
+  jsaRows = [];
+  addJsaRow();
+  document.getElementById('hw_link_wrap').style.display = 'none';
+  document.getElementById('hwOddHoursWarning').style.display = 'none';
+  document.getElementById('exportPanel').style.display='none';
+  ['sig1','sig2'].forEach(id=>{
+    const c = document.getElementById(id);
+    c.getContext('2d').clearRect(0,0,c.width,c.height);
+  });
+});
+
+updateProgress();
+</script>
+</body>
+</html>
