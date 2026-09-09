@@ -58,31 +58,68 @@
   }
   .progress-label{font-size:12px;color:var(--ink-soft);}
 
-  .history-strip{
-    background:#F1EEE6;border-bottom:1px solid var(--line);
-    padding:10px 20px;overflow-x:auto;
+  .history-tab{
+    position:fixed;bottom:24px;right:0;
+    z-index:35;background:var(--ink);color:#fff;border:none;
+    border-radius:10px 0 0 10px;padding:15px 9px;font-size:15px;line-height:1.5;
+    cursor:pointer;box-shadow:-2px 2px 8px rgba(0,0,0,.2);text-align:center;
   }
-  .history-strip-inner{
-    display:flex;gap:10px;max-width:1300px;margin:0 auto;
+  .history-overlay{
+    position:fixed;inset:0;background:rgba(20,24,28,.4);z-index:39;
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .history-overlay.show{opacity:1;pointer-events:auto;}
+  .history-drawer{
+    position:fixed;top:0;right:0;height:100vh;width:330px;max-width:88vw;
+    background:#fff;z-index:40;box-shadow:-6px 0 18px rgba(0,0,0,.22);
+    transform:translateX(100%);transition:transform .25s ease;
+    display:flex;flex-direction:column;
+  }
+  .history-drawer.open{transform:translateX(0);}
+  .history-drawer-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 18px;border-bottom:1px solid var(--line);
+    font-weight:700;font-size:15px;color:var(--ink);flex:0 0 auto;
+  }
+  .history-drawer-close{
+    background:none;border:none;font-size:17px;cursor:pointer;
+    color:var(--ink-soft);padding:4px 8px;
+  }
+  .history-drawer-body{
+    padding:14px;overflow-y:auto;flex:1;
+    display:flex;flex-direction:column;gap:10px;
   }
   .hist-card{
-    flex:0 0 auto;min-width:190px;max-width:220px;
-    border:1px solid var(--line);border-radius:8px;background:#fff;
-    padding:8px 10px;font-size:12px;color:var(--ink);
+    width:100%;
+    border:1px solid #B0B0B0;border-radius:8px;background:#fff;
+    padding:9px 11px;font-size:12.5px;color:var(--ink);
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .hist-card .hist-main{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .hist-card .hist-sub{font-size:11px;color:var(--ink-soft);margin:2px 0 6px;}
+  .hist-card .hist-sub{font-size:11px;color:var(--ink-soft);margin:2px 0 8px;}
   .hist-card .hist-actions{display:flex;gap:6px;}
   .hist-card .hist-btn{
     flex:1;border:1px solid var(--line);background:#FBFAF7;border-radius:6px;
-    padding:5px 6px;font-size:11px;cursor:pointer;color:var(--ink);
+    padding:7px 6px;font-size:12px;cursor:pointer;color:var(--ink);
   }
   .hist-card .hist-btn.danger{color:var(--bad);border-color:var(--bad);}
   .hist-clear-link{
-    flex:0 0 auto;align-self:center;background:none;border:none;
-    color:var(--ink-soft);font-size:11.5px;text-decoration:underline;
-    cursor:pointer;padding:0 6px;white-space:nowrap;
+    align-self:center;background:none;border:none;
+    color:var(--ink-soft);font-size:12px;text-decoration:underline;
+    cursor:pointer;padding:8px 6px;white-space:nowrap;
   }
+
+  .scroll-top-btn{
+    position:fixed;left:18px;bottom:18px;z-index:30;
+    width:46px;height:46px;border-radius:50%;
+    background:var(--ink);color:#fff;border:none;
+    font-size:19px;line-height:1;cursor:pointer;
+    box-shadow:0 3px 10px rgba(31,41,51,.3);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    transform:translateY(8px);
+  }
+  .scroll-top-btn.show{opacity:1;pointer-events:auto;transform:translateY(0);}
 
   main{max-width:1300px;margin:0 auto;padding:18px 20px 0;}
   section.block{
@@ -153,8 +190,9 @@
   .chip input{display:none;}
 
   .item{
-    border:1px solid var(--line);border-radius:9px;
+    border:1px solid #B0B0B0;border-radius:9px;
     padding:12px;margin-bottom:10px;background:#FEFDFB;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   #item-2{border:2px solid #7B1E3A;}
   .item-top{display:flex;gap:10px;align-items:flex-start;}
@@ -210,12 +248,14 @@
   }
 
   .jsa-legend{
-    background:#FBFAF7;border:1px solid var(--line);border-radius:8px;
+    background:#FBFAF7;border:1px solid #B0B0B0;border-radius:8px;
     padding:10px 12px;font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;
     display:flex;flex-direction:column;gap:4px;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .jsa-row{
-    border:1px solid var(--line);border-radius:9px;padding:12px;margin-bottom:12px;background:#FEFDFB;
+    border:1px solid #B0B0B0;border-radius:9px;padding:12px;margin-bottom:12px;background:#FEFDFB;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .jsa-row-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
   .jsa-row-num{font-weight:700;font-size:14px;}
@@ -242,8 +282,9 @@
   .confirm-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
   .confirm-item{
     display:flex;align-items:flex-start;gap:10px;
-    border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    border:1px solid #B0B0B0;border-radius:8px;padding:10px 12px;
     background:#FBFAF7;font-size:13.5px;cursor:pointer;line-height:1.4;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .confirm-item input{margin-top:2px;width:16px;height:16px;flex:0 0 auto;}
   .hw-link{
@@ -251,8 +292,9 @@
     padding:10px;font-size:13.5px;border-radius:9px;
   }
   .appendix-details{
-    border:1px solid var(--line);border-radius:8px;
+    border:1px solid #B0B0B0;border-radius:8px;
     background:#FBFAF7;padding:10px 12px;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .appendix-details summary{
     cursor:pointer;font-weight:600;font-size:13.5px;color:var(--ink);
@@ -265,8 +307,9 @@
   .appendix-body ul{padding-right:20px;line-height:1.7;margin:0;}
 
   .obs-row{
-    border:1px solid var(--line);border-radius:9px;
+    border:1px solid #B0B0B0;border-radius:9px;
     padding:10px;margin-bottom:10px;background:#FEFDFB;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .obs-row-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
   .obs-row-num{font-weight:700;font-size:13px;color:var(--ink-soft);}
@@ -278,7 +321,8 @@
     gap:10px;margin-top:14px;
   }
   .photo-card{
-    border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#FBFAF7;
+    border:1px solid #B0B0B0;border-radius:8px;overflow:hidden;background:#FBFAF7;
+    box-shadow:0 1px 4px rgba(31,41,51,.08);
   }
   .photo-card img{width:100%;height:110px;object-fit:cover;display:block;}
   .photo-caption{
@@ -326,9 +370,10 @@
 
   @media print{
     @page{ size: landscape; }
-    .topbar,.actions,.history-strip{display:none !important;}
+    .topbar,.actions,.history-tab,.history-drawer,.history-overlay,.scroll-top-btn{display:none !important;}
     body{background:#fff;}
     section.block{break-inside:avoid;border:1px solid #999;box-shadow:none;}
+    .item,.jsa-row,.obs-row,.confirm-item,.photo-card,.hist-card,.appendix-details,.jsa-legend{box-shadow:none;}
     .status-btn{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
     .photo-remove,#btnAddPhoto{display:none !important;}
     .photo-caption{border-top:none;pointer-events:none;}
@@ -350,8 +395,14 @@
   <div class="progress-label" id="progressLabel">0 מתוך 6 סעיפים נענו</div>
 </div>
 
-<div class="history-strip" id="historyStrip" style="display:none;">
-  <div class="history-strip-inner" id="historyStripInner"></div>
+<button type="button" id="btnHistoryToggle" class="history-tab" title="סקרים שמורים" aria-label="סקרים שמורים">🗂️<br>סקרים<br>שמורים</button>
+<div class="history-overlay" id="historyOverlay"></div>
+<div class="history-drawer" id="historyDrawer">
+  <div class="history-drawer-head">
+    <span>🗂️ סקרים שמורים</span>
+    <button type="button" id="btnHistoryClose" class="history-drawer-close" aria-label="סגור">✕</button>
+  </div>
+  <div class="history-drawer-body" id="historyStripInner"></div>
 </div>
 
 <main>
@@ -626,8 +677,6 @@
     <p class="hint">מבוסס על תבנית סקר הסיכונים של PCB. לכל שלב/פעולה — הגדירו תרחיש מזיק אפשרי, דרגו הסתברות וחומרה, קבעו פעולה מונעת ודרגו מחדש לאחר יישומה.</p>
 
     <div class="field-grid">
-      <label class="field"><span class="lbl">מס' טופס JSA</span><input type="text" id="jsa_form_num"></label>
-      <label class="field"><span class="lbl">ממלא הטופס (שם ושם משפחה)</span><input type="text" id="jsa_filler"></label>
       <label class="field"><span class="lbl">נציג המחלקה</span><input type="text" id="jsa_dept_rep"></label>
       <label class="field"><span class="lbl">עמדת עבודה / תחנה</span><input type="text" id="jsa_station"></label>
     </div>
@@ -720,6 +769,8 @@
   <div class="export-box" id="exportBox"></div>
   <div class="hint">אפשר להעתיק את הטקסט ולשלוח בוואטסאפ/מייל.</div>
 </div>
+
+<button type="button" id="btnScrollTop" class="scroll-top-btn" title="חזרה לראש הדף" aria-label="חזרה לראש הדף">⬆</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -926,7 +977,6 @@ addJsaRow(); // start with one empty row
 function buildJsaWorkbook(){
   const val = id => document.getElementById(id).value.trim();
   const aoa = [];
-  aoa.push(["מס' טופס JSA:", val('jsa_form_num')||'', '', "ממלא טופס:", val('jsa_filler')||'']);
   aoa.push(["נציג מחלקה:", val('jsa_dept_rep')||'', '', "עמדת עבודה/תחנה:", val('jsa_station')||'']);
   aoa.push([]);
   aoa.push(["מס'","תיאור השלב/פעולה","תרחישים מזיקים אפשריים","הסתברות","חומרה","מכפלה","פעילות מונעת נדרשת","בוצע","הסתברות (לאחר)","חומרה (לאחר)","מכפלה (לאחר)"]);
@@ -947,7 +997,7 @@ function buildJsaWorkbook(){
 document.getElementById('btnJsaXlsx').addEventListener('click', async ()=>{
   const val = id => document.getElementById(id).value.trim();
   await saveToHistory();
-  renderHistoryStrip();
+  renderHistoryDrawer();
   if(typeof XLSX === 'undefined'){
     alert('שגיאה בטעינת ספריית האקסל — יש לוודא חיבור לאינטרנט ולנסות שוב.');
     return;
@@ -1191,17 +1241,14 @@ function formatHistoryLabel(snap){
   return { main: company + (date ? (' — ' + date) : ''), sub: 'נשמר: ' + savedAt };
 }
 
-function renderHistoryStrip(){
+function renderHistoryDrawer(){
   const list = loadHistory();
-  const strip = document.getElementById('historyStrip');
   const c = document.getElementById('historyStripInner');
+  c.innerHTML = '';
   if(!list.length){
-    strip.style.display = 'none';
-    c.innerHTML = '';
+    c.innerHTML = '<p class="hint">אין עדיין סקרים שמורים במכשיר זה. הם נשמרים אוטומטית בכל שליחה, או בלחיצה על "💾 שמור טופס".</p>';
     return;
   }
-  strip.style.display = 'block';
-  c.innerHTML = '';
   list.forEach((snap, idx)=>{
     const lbl = formatHistoryLabel(snap);
     const card = document.createElement('div');
@@ -1222,7 +1269,7 @@ function renderHistoryStrip(){
   clearBtn.addEventListener('click', ()=>{
     if(!confirm('למחוק את כל הסקרים השמורים במכשיר זה?')) return;
     try{ localStorage.removeItem(HISTORY_KEY); }catch(e){}
-    renderHistoryStrip();
+    renderHistoryDrawer();
   });
   c.appendChild(clearBtn);
 
@@ -1232,6 +1279,7 @@ function renderHistoryStrip(){
       const snap = list[Number(btn.dataset.idx)];
       if(!snap) return;
       restoreFormSnapshot(snap);
+      closeHistoryDrawer();
       window.scrollTo({top:0, behavior:'smooth'});
     });
   });
@@ -1240,16 +1288,31 @@ function renderHistoryStrip(){
       const list = loadHistory();
       list.splice(Number(btn.dataset.idx), 1);
       try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); }catch(e){}
-      renderHistoryStrip();
+      renderHistoryDrawer();
     });
   });
 }
-renderHistoryStrip(); // show any surveys already saved on this device
+
+function openHistoryDrawer(){
+  renderHistoryDrawer();
+  document.getElementById('historyDrawer').classList.add('open');
+  document.getElementById('historyOverlay').classList.add('show');
+}
+function closeHistoryDrawer(){
+  document.getElementById('historyDrawer').classList.remove('open');
+  document.getElementById('historyOverlay').classList.remove('show');
+}
+document.getElementById('btnHistoryToggle').addEventListener('click', openHistoryDrawer);
+document.getElementById('btnHistoryClose').addEventListener('click', closeHistoryDrawer);
+document.getElementById('historyOverlay').addEventListener('click', closeHistoryDrawer);
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape') closeHistoryDrawer();
+});
 
 document.getElementById('btnSaveNow').addEventListener('click', async ()=>{
   await saveToHistory();
-  renderHistoryStrip();
-  alert('הטופס נשמר בשורת "סקרים שמורים" למעלה (עד 5 האחרונים).');
+  renderHistoryDrawer();
+  alert('הטופס נשמר ב"סקרים שמורים" (עד 5 האחרונים).');
 });
 
 document.querySelectorAll('.status-btn').forEach(btn=>{
@@ -1529,10 +1592,8 @@ function buildSummaryText(){
 
   // JSA risk matrix — only included if the person actually filled in a row
   const jsaAnswered = jsaRows.some(r => r.step || r.scenario || r.prob1 || r.sev1 || r.action);
-  if(jsaAnswered || val('jsa_form_num') || val('jsa_station')){
+  if(jsaAnswered || val('jsa_station')){
     lines.push('--- סקר סיכונים (JSA) ---');
-    if(val('jsa_form_num')) lines.push('מס\' טופס JSA: ' + val('jsa_form_num'));
-    if(val('jsa_filler')) lines.push('ממלא הטופס: ' + val('jsa_filler'));
     if(val('jsa_dept_rep')) lines.push('נציג המחלקה: ' + val('jsa_dept_rep'));
     if(val('jsa_station')) lines.push('עמדת עבודה/תחנה: ' + val('jsa_station'));
     jsaRows.forEach((row, idx)=>{
@@ -1640,7 +1701,7 @@ function buildWordHtml(){
     });
     jsaHtml = `
       <h2>סקר סיכונים (JSA)</h2>
-      <p>מס' טופס: ${escHtml(val('jsa_form_num'))||'—'} | ממלא: ${escHtml(val('jsa_filler'))||'—'} | נציג מחלקה: ${escHtml(val('jsa_dept_rep'))||'—'} | עמדה: ${escHtml(val('jsa_station'))||'—'}</p>
+      <p>נציג מחלקה: ${escHtml(val('jsa_dept_rep'))||'—'} | עמדה: ${escHtml(val('jsa_station'))||'—'}</p>
       <table border="1" cellspacing="0" cellpadding="4">
         <tr style="background:#eee;"><th>#</th><th>שלב</th><th>תרחיש</th><th>הסתברות</th><th>חומרה</th><th>מכפלה</th><th>פעולה מונעת</th><th>בוצע</th><th>הסתברות לאחר</th><th>חומרה לאחר</th><th>מכפלה לאחר</th></tr>
         ${jsaRowsHtml}
@@ -1717,7 +1778,7 @@ function downloadTextFile(filename, text){
 document.getElementById('btnEmail').addEventListener('click', async ()=>{
   const val = id => document.getElementById(id).value.trim();
   await saveToHistory();
-  renderHistoryStrip();
+  renderHistoryDrawer();
   const text = buildSummaryText();
   document.getElementById('exportBox').textContent = text;
   document.getElementById('exportPanel').style.display = 'block';
@@ -1763,7 +1824,7 @@ document.getElementById('btnEmail').addEventListener('click', async ()=>{
 document.getElementById('btnWord').addEventListener('click', async ()=>{
   const val = id => document.getElementById(id).value.trim();
   await saveToHistory();
-  renderHistoryStrip();
+  renderHistoryDrawer();
   const html = buildWordHtml();
   const safeCompany = (val('f_company')||'קבלן').replace(/[\\/:*?"<>|]/g,'-');
   const filename = `כרטיס-בטיחות-${safeCompany}-${val('f_date')||''}.doc`;
@@ -1797,7 +1858,7 @@ document.getElementById('btnWord').addEventListener('click', async ()=>{
 document.getElementById('btnMailto').addEventListener('click', async ()=>{
   const val = id => document.getElementById(id).value.trim();
   await saveToHistory();
-  renderHistoryStrip();
+  renderHistoryDrawer();
   const text = buildSummaryText();
   document.getElementById('exportBox').textContent = text;
   document.getElementById('exportPanel').style.display = 'block';
@@ -1847,6 +1908,18 @@ document.getElementById('btnReset').addEventListener('click', ()=>{
     c.getContext('2d').clearRect(0,0,c.width,c.height);
   });
 });
+
+// ---- Scroll-to-top floating button ----
+(function setupScrollTop(){
+  const btn = document.getElementById('btnScrollTop');
+  if(!btn) return;
+  const toggle = () => btn.classList.toggle('show', window.scrollY > 300);
+  window.addEventListener('scroll', toggle, {passive:true});
+  toggle();
+  btn.addEventListener('click', ()=>{
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+})();
 
 updateProgress();
 </script>
