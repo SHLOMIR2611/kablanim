@@ -335,6 +335,32 @@
     color:var(--bad);font-size:12px;padding:5px;cursor:pointer;font-weight:600;
   }
 
+  .worker-table{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+  .worker-row{
+    display:grid;grid-template-columns:28px 1fr 150px 130px 1.2fr 30px;gap:10px;align-items:center;
+    border:1px solid var(--line);border-radius:8px;padding:10px;background:#FBFAF7;
+  }
+  .worker-head{display:grid;grid-template-columns:28px 1fr 150px 130px 1.2fr 30px;gap:10px;font-size:11.5px;font-weight:700;color:var(--ink-soft);padding:0 11px;}
+  .worker-num{font-weight:700;font-size:14px;text-align:center;}
+  .worker-row input[type=text]{margin:0;}
+  .worker-sig-wrap{display:flex;flex-direction:column;}
+  canvas.sig.wsig{height:70px;}
+  .w-photo{display:flex;flex-direction:column;align-items:stretch;gap:4px;}
+  .w-photo-btn{border:1px dashed var(--line);border-radius:7px;background:#fff;color:var(--ink);font-family:inherit;font-size:12.5px;padding:8px 6px;cursor:pointer;}
+  .w-photo img{width:100%;max-width:140px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:none;}
+  .w-photo-clear{background:none;border:none;color:var(--ink-soft);font-size:11.5px;text-decoration:underline;cursor:pointer;padding:0;display:none;}
+  .worker-remove{background:none;border:none;color:var(--bad);font-size:16px;cursor:pointer;font-weight:700;padding:4px;}
+  @media (max-width:700px){
+    .worker-head{display:none;}
+    .worker-row{grid-template-columns:28px 1fr 30px;}
+    .worker-row .w-id,.worker-row .w-photo,.worker-row .worker-sig-wrap{grid-column:2 / 3;}
+  }
+  .version-box{max-width:1300px;margin:0 auto 28px;padding:0 20px;font-size:12.5px;color:var(--ink-soft);}
+  .version-box summary{cursor:pointer;font-weight:700;}
+  .version-box table{border-collapse:collapse;width:100%;margin-top:8px;background:#fff;}
+  .version-box th,.version-box td{border:1px solid var(--line);padding:6px 8px;text-align:right;vertical-align:top;}
+  .version-box th{background:#F3F1EA;}
+  .print-ver{display:none;}
   .sig-row{display:flex;gap:12px;flex-wrap:wrap;}
   .sig-col{flex:1;min-width:260px;}
   canvas.sig{
@@ -382,6 +408,9 @@
     .obs-remove,#btnAddObservation{display:none !important;}
     .jsa-row{break-inside:avoid;}
     #hw_link_wrap{display:none !important;}
+    .worker-remove,#btnAddWorker,.worker-sig-wrap .sig-clear,.w-photo-btn,.w-photo-clear,.version-box{display:none !important;}
+    .worker-row{break-inside:avoid;}
+    .print-ver{display:block;text-align:left;font-size:10px;color:#555;margin-top:8px;}
   }
 </style>
 </head>
@@ -390,7 +419,7 @@
 <div class="topbar">
   <div class="topbar-logo"><img src="data:image/jpeg;base64,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" alt="PCB Technologies"></div>
   <h1>כרטיס בטיחות לקבלנים</h1>
-  <div class="sub">מבוסס על טופס PCB 151/6/2, עם סקר סיכונים (JSA)</div>
+  <div class="sub">מבוסס על טופס PCB 151/6/2, עם סקר סיכונים (JSA) · <span class="form-ver">גרסה 4 · 21.10.2026</span></div>
   <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
   <div class="progress-label" id="progressLabel">0 מתוך 6 סעיפים נענו</div>
 </div>
@@ -562,6 +591,14 @@
     </label>
   </section>
 
+  <section class="block" id="workersSection">
+    <h2 class="block-title">עובדי הקבלן</h2>
+    <p class="hint" style="margin-top:-6px;margin-bottom:12px;">כל עובד מטעם הקבלן: שם מלא, תעודת זהות, צילום אמצעי זיהוי וחתימה על קבלת התדריך.</p>
+    <div class="worker-head"><span>#</span><span>שם העובד</span><span>ת.ז.</span><span>צילום אמצעי זיהוי</span><span>חתימה</span><span></span></div>
+    <div class="worker-table" id="workerTable"></div>
+    <button class="btn btn-secondary" type="button" id="btnAddWorker" style="width:100%;margin-top:10px;">➕ הוסף עובד</button>
+  </section>
+
   <section class="block">
     <h2 class="block-title">סוג העבודה</h2>
     <div class="chip-grid" id="workTypes">
@@ -576,6 +613,7 @@
       <label class="chip"><input type="checkbox" value="ניתוק מערכות התראה">ניתוק מערכות התראה</label>
       <label class="chip"><input type="checkbox" value="עבודות חפירה">עבודות חפירה</label>
       <label class="chip"><input type="checkbox" value="עבודה עם קרינה">עבודה עם קרינה</label>
+      <label class="chip"><input type="checkbox" value="עבודות מיזוג">עבודות מיזוג</label>
       <label class="chip"><input type="checkbox" id="workOtherCheck" value="אחר">אחר</label>
     </div>
     <input type="text" id="f_worktype_other" placeholder="פרטו את סוג העבודה" style="display:none;margin-top:10px;width:100%;">
@@ -729,6 +767,9 @@
         <span class="lbl">חתימת הקבלן / בא כוחו</span>
         <canvas class="sig" id="sig1"></canvas>
         <button class="sig-clear" data-target="sig1">נקה חתימה</button>
+        <label class="field" style="margin-top:10px;"><span class="lbl">מספר תעודת זהות של הקבלן / בא כוחו</span>
+          <input type="text" id="f_sig1_id" inputmode="numeric" maxlength="9" placeholder="ת.ז.">
+        </label>
       </div>
       <div class="sig-col">
         <span class="lbl">חתימת ממונה הבטיחות / מנהל אחזקה</span>
@@ -736,6 +777,7 @@
         <button class="sig-clear" data-target="sig2">נקה חתימה</button>
       </div>
     </div>
+    <div class="print-ver">גרסת טופס 4 · 21.10.2026</div>
   </section>
 
   <section class="block briefing-block" id="observationsSection">
@@ -770,10 +812,23 @@
   <div class="hint">אפשר להעתיק את הטקסט ולשלוח בוואטסאפ/מייל.</div>
 </div>
 
+<details class="version-box" id="versionLog">
+  <summary>היסטוריית גרסאות הטופס (גרסה נוכחית: 4)</summary>
+  <table>
+    <tr><th style="width:60px">גרסה</th><th style="width:100px">תאריך</th><th>שינויים</th></tr>
+    <tr><td>4</td><td>21.10.2026</td><td>שינויי גרסאות 2–3 הוטמעו בגרסת הרפו (kablanim), עם סקרים שמורים, ייצוא Word/Excel, תצפיות ונספח קנסות. עובדי הקבלן נשמרים גם ב"סקרים שמורים" ומופיעים בקובץ ה-Word.</td></tr>
+    <tr><td>3</td><td>15.10.2026</td><td>באישור וחתימות: נוסף שדה מספר תעודת זהות מתחת לחתימת הקבלן / בא כוחו.</td></tr>
+    <tr><td>2</td><td>15.10.2026</td><td>נוסף מקטע "עובדי הקבלן": שם, ת.ז., צילום אמצעי זיהוי וחתימה לכל עובד (שורה אחת + "הוסף עובד"). נוסף סוג עבודה "עבודות מיזוג". נוסף מספור גרסאות.</td></tr>
+    <tr><td>1</td><td>09.09.2026</td><td>גרסה בסיסית של הטופס.</td></tr>
+  </table>
+</details>
+
 <button type="button" id="btnScrollTop" class="scroll-top-btn" title="חזרה לראש הדף" aria-label="חזרה לראש הדף">⬆</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+const FORM_VERSION = '4';
+const FORM_VERSION_DATE = '21.10.2026';
 const ORIGINAL = [
   ["1","תסקרי בדיקה עבור מתקני הרמה ואביזרים"],
   ["2","האם יש פעילות המערבת עבודה חמה? אם כן — יש לפנות לנוהל עבודה חמה"],
@@ -1110,7 +1165,8 @@ function collectFormSnapshot(){
     hwChecked: [...document.querySelectorAll('#hwChecklist input:checked')].map(i=>i.value),
     jsaRows: JSON.parse(JSON.stringify(jsaRows)),
     observations: JSON.parse(JSON.stringify(observations)),
-    photos: photos.map(p=>({dataUrl:p.dataUrl, caption:p.caption})),
+    photos: photos.filter(p=>!String(p.id).startsWith('idp_')).map(p=>({dataUrl:p.dataUrl, caption:p.caption})),
+    workers: getWorkers().map(w=>({name:w.name, tz:w.tz, photo:w.photo})),
   };
 }
 
@@ -1167,6 +1223,7 @@ function restoreFormSnapshot(snap){
     file: dataURLtoFile(p.dataUrl, 'תמונה-'+(i+1)+'.jpg'),
   }));
   renderGallery();
+  resetWorkers(snap.workers||[]);
 }
 
 function loadHistory(){
@@ -1209,6 +1266,9 @@ async function saveToHistory(){
       compressed.push({ dataUrl: await compressImageDataUrl(p.dataUrl, 900, 0.6), caption: p.caption });
     }
     snap.photos = compressed;
+    for(const w of (snap.workers||[])){
+      if(w.photo) w.photo = await compressImageDataUrl(w.photo, 900, 0.6);
+    }
 
     let list = loadHistory();
     list.unshift(snap);
@@ -1224,8 +1284,8 @@ async function saveToHistory(){
     // Still too big — drop photos from the OLDEST saved entries first (one at a time),
     // keeping the newest entry's photos for as long as possible.
     for(let i = list.length - 1; i >= 0; i--){
-      if(list[i].photos && list[i].photos.length){
-        list[i] = {...list[i], photos: []};
+      if((list[i].photos && list[i].photos.length) || (list[i].workers||[]).some(w=>w.photo)){
+        list[i] = {...list[i], photos: [], workers: (list[i].workers||[]).map(w=>({...w, photo:''}))};
         if(tryStore(list)) return;
       }
     }
@@ -1546,6 +1606,116 @@ function renderGallery(){
   });
 }
 
+// ---- contractor workers (name, ID, ID-document photo, signature) ----
+let workerCounter = 0;
+function addWorkerRow(data){
+  const id = 'w' + (workerCounter++);
+  const row = document.createElement('div');
+  row.className = 'worker-row';
+  row.dataset.id = id;
+  row.innerHTML = `
+    <span class="worker-num"></span>
+    <input type="text" class="w-name" placeholder="שם מלא">
+    <input type="text" class="w-id" placeholder="ת.ז." inputmode="numeric" maxlength="9">
+    <div class="w-photo">
+      <button type="button" class="w-photo-btn">📷 צלם אמצעי זיהוי</button>
+      <input type="file" accept="image/*" capture="environment" style="display:none;">
+      <img alt="צילום אמצעי זיהוי">
+      <button type="button" class="w-photo-clear">הסר צילום</button>
+    </div>
+    <div class="worker-sig-wrap">
+      <canvas class="sig wsig" id="sig_${id}"></canvas>
+      <button class="sig-clear" type="button" data-target="sig_${id}">נקה חתימה</button>
+    </div>
+    <button type="button" class="worker-remove" title="הסר עובד">✕</button>`;
+  document.getElementById('workerTable').appendChild(row);
+  setupSig('sig_' + id);
+  const c = document.getElementById('sig_' + id);
+  c.addEventListener('mousedown', ()=>{ c.dataset.signed = '1'; });
+  c.addEventListener('touchstart', ()=>{ c.dataset.signed = '1'; });
+  row.querySelector('.sig-clear').addEventListener('click', ()=>{
+    c.getContext('2d').clearRect(0,0,c.width,c.height);
+    c.dataset.signed = '';
+  });
+  row.querySelector('.w-id').addEventListener('input', e=>{ e.target.value = e.target.value.replace(/\D/g,''); });
+
+  // ID-document photo: also listed under "תמונות מצורפות" so it goes out with print/PDF/Word/share
+  const ph = row.querySelector('.w-photo');
+  const fileIn = ph.querySelector('input[type=file]');
+  const img = ph.querySelector('img');
+  const btnShot = ph.querySelector('.w-photo-btn');
+  const btnClr = ph.querySelector('.w-photo-clear');
+  const photoId = 'idp_' + id;
+  row.dataset.photoId = photoId;
+  const idCaption = ()=> 'צילום אמצעי זיהוי – ' + (row.querySelector('.w-name').value.trim() || ('עובד ' + row.querySelector('.worker-num').textContent));
+  function setIdPhoto(dataUrl, file){
+    photos = photos.filter(x=>x.id!==photoId);
+    photos.push({ id: photoId, dataUrl, caption: idCaption(), file: file || dataURLtoFile(dataUrl, 'אמצעי-זיהוי.jpg') });
+    renderGallery();
+    img.src = dataUrl; img.style.display = 'block';
+    btnShot.textContent = '📷 צלם שוב';
+    btnClr.style.display = 'inline';
+  }
+  row._setIdPhoto = setIdPhoto;
+  function dropIdPhoto(){
+    photos = photos.filter(x=>x.id!==photoId);
+    renderGallery();
+  }
+  btnShot.addEventListener('click', ()=> fileIn.click());
+  fileIn.addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev=> setIdPhoto(ev.target.result, file);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  });
+  btnClr.addEventListener('click', ()=>{
+    dropIdPhoto();
+    img.removeAttribute('src'); img.style.display = 'none';
+    btnShot.textContent = '📷 צלם אמצעי זיהוי';
+    btnClr.style.display = 'none';
+  });
+  row.querySelector('.w-name').addEventListener('input', ()=>{
+    const p = photos.find(x=>x.id===photoId);
+    if(p){ p.caption = idCaption(); renderGallery(); }
+  });
+  row.querySelector('.worker-remove').addEventListener('click', ()=>{
+    dropIdPhoto();
+    row.remove(); renumberWorkers();
+  });
+  renumberWorkers();
+  if(data){
+    row.querySelector('.w-name').value = data.name || '';
+    row.querySelector('.w-id').value = data.tz || '';
+    if(data.photo) setIdPhoto(data.photo);
+  }
+}
+function renumberWorkers(){
+  document.querySelectorAll('#workerTable .worker-row').forEach((r,i)=>{
+    r.querySelector('.worker-num').textContent = i+1;
+  });
+}
+function getWorkers(){
+  return [...document.querySelectorAll('#workerTable .worker-row')].map(r=>({
+    name: r.querySelector('.w-name').value.trim(),
+    tz: r.querySelector('.w-id').value.trim(),
+    signed: r.querySelector('canvas').dataset.signed === '1',
+    photo: r.querySelector('.w-photo img').getAttribute('src') || ''
+  })).filter(w=>w.name || w.tz || w.photo);
+}
+function resetWorkers(list){
+  // drop any ID photos belonging to the old rows
+  photos = photos.filter(p=>!String(p.id).startsWith('idp_'));
+  renderGallery();
+  document.getElementById('workerTable').innerHTML = '';
+  if(list && list.length) list.forEach(w=>addWorkerRow(w));
+  else addWorkerRow();
+}
+document.getElementById('btnAddWorker').addEventListener('click', ()=>addWorkerRow());
+document.getElementById('f_sig1_id').addEventListener('input', e=>{ e.target.value = e.target.value.replace(/\D/g,''); });
+resetWorkers();
+
 // build summary text (shared by "הפק סיכום" and "שלח במייל")
 function buildSummaryText(){
   const val = id => document.getElementById(id).value.trim();
@@ -1553,11 +1723,16 @@ function buildSummaryText(){
   const structure = structureName();
 
   let lines = [];
-  lines.push('כרטיס בטיחות לקבלנים — סיכום');
+  lines.push('כרטיס בטיחות לקבלנים — סיכום  (גרסת טופס ' + FORM_VERSION + ', ' + FORM_VERSION_DATE + ')');
   lines.push('תאריך: ' + (val('f_date')||'—'));
   lines.push('קבלן: ' + (val('f_company')||'—') + '  |  ממונה: ' + managerName());
   lines.push('אזור: ' + (val('f_area')||'—') + '  |  משך: ' + (val('f_hours')||'—'));
   lines.push('מזמין העבודה: ' + (val('f_orderer')||'—') + '  |  תיאום מול מנהל מחלקה: ' + (val('f_dept_coord')||'—'));
+  const workers = getWorkers();
+  if(workers.length){
+    lines.push('עובדי הקבלן (' + workers.length + '):');
+    workers.forEach((w,i)=> lines.push(`  ${i+1}. ${w.name||'—'}  |  ת.ז. ${w.tz||'—'}  |  ${w.signed?'חתם':'לא חתם'}${w.photo?'  |  צולם אמצעי זיהוי':''}`));
+  }
   lines.push('סוג עבודה: ' + workTypes);
   lines.push('חומר מבנה/שלד: ' + structure);
   lines.push('יעוץ מומחים: ' + getExpertsText());
@@ -1631,6 +1806,7 @@ function buildSummaryText(){
   lines.push('חתום על נוהל קבלנים PCB 151-6: ' + (signed151_6 ? 'כן' : 'לא'));
   const awareFines = document.getElementById('f_aware_fines').checked;
   lines.push("מודע למדיניות הקנסות (נספח ב'): " + (awareFines ? "כן" : "לא"));
+  lines.push('ת.ז. הקבלן / בא כוחו (החותם): ' + (val('f_sig1_id')||'—'));
 
   const obsFilled = observations.filter(o=>o.text.trim());
   if(obsFilled.length){
@@ -1718,6 +1894,10 @@ function buildWordHtml(){
       <ul>${hwChecked.map(v=>`<li>${escHtml(v)}</li>`).join('')}</ul>`;
   }
 
+  const wList = getWorkers();
+  const workersHtml = wList.length ? `<h2>עובדי הקבלן</h2><table border="1" cellspacing="0" cellpadding="4"><tr style="background:#eee;"><th>#</th><th>שם</th><th>ת.ז.</th><th>חתם</th><th>אמצעי זיהוי</th></tr>` +
+    wList.map((w,i)=>`<tr><td>${i+1}</td><td>${escHtml(w.name)}</td><td>${escHtml(w.tz)}</td><td>${w.signed?'כן':'לא'}</td><td>${w.photo?'צולם (בתמונות המצורפות)':'—'}</td></tr>`).join('') + `</table>` : '';
+
   let photosHtml = '';
   if(photos.length){
     photosHtml = `<h2>תמונות מצורפות</h2>` + photos.map((p,i)=>
@@ -1753,12 +1933,15 @@ function buildWordHtml(){
   <h2>צ'קליסט</h2>
   <table><tr><th>מס'</th><th>פריט</th><th>סטטוס</th><th>הערה</th></tr>${rows}</table>
 
+  ${workersHtml}
   ${jsaHtml}
   ${hwHtml}
   ${photosHtml}
 
   <p>חתום על נוהל קבלנים PCB 151-6: ${document.getElementById('f_signed_151_6').checked ? 'כן' : 'לא'}</p>
   <p>מודע למדיניות הקנסות (נספח ב'): ${document.getElementById('f_aware_fines').checked ? 'כן' : 'לא'}</p>
+  <p>ת.ז. הקבלן / בא כוחו (החותם): ${escHtml(val('f_sig1_id'))||'—'}</p>
+  <p style="font-size:10px;color:#666;">גרסת טופס ${FORM_VERSION} · ${FORM_VERSION_DATE}</p>
   ${observations.filter(o=>o.text.trim()).length ? `<h2>תצפיות</h2><ul>${observations.filter(o=>o.text.trim()).map(o=>`<li>${escHtml(o.text)}</li>`).join('')}</ul>` : ''}
   ${crit ? `<p class="crit">🔴 ממצא קריטי: ${escHtml(crit)}</p>` : '<p>לא דווח ממצא קריטי.</p>'}
 </body></html>`;
@@ -1907,6 +2090,7 @@ document.getElementById('btnReset').addEventListener('click', ()=>{
     const c = document.getElementById(id);
     c.getContext('2d').clearRect(0,0,c.width,c.height);
   });
+  resetWorkers();
 });
 
 // ---- Scroll-to-top floating button ----
